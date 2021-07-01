@@ -63,6 +63,7 @@ def read_excle(path):
             items.append(tt)
     return items
 
+
 if __name__ == '__main__':
     # print(read_excle(filePath+'/'+file))
     tup = read_excle(filePath+'/'+file)
