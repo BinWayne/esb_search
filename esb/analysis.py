@@ -4,8 +4,9 @@ from mysql import TestDBHelper
 from mysql import DBHelper
 
 file = 'quanjingtu.xlsx'
-fllePath = '/Users/wubin/workspace/python/tongshang/esb/excel'
-
+fllePath = '/Users/wubin/workspace/python/tongshang/esb_search/esb/excel'
+sheets=['流程服务','内部渠道服务','合作方服务','客户信息管理','客户服务','存款','贷款',
+'银行卡','支付结算','投资理财','中间业务','金融市场','投行','客户资产管理','风险管理','银行业务支持','企业管理支持','技术支持']
 
 class item:
     bigCategory=''
@@ -37,14 +38,14 @@ class item:
         return str(self.__dict__)
 
 
-def read_excel(excelDir,fileName):
+def read_excel(excelDir,fileName,sheetName):
     
     print("===============================")
-    sheet = ['流程服务','内部渠道服务','合作方服务']
     print(f'start to check file {excelDir} / {fileName}')
-    df = pd.read_excel(excelDir+'/'+fileName,sheet_name='合作方服务',dtype=str)
+   
+    df = pd.read_excel(excelDir+'/'+fileName,sheet_name=sheetName,dtype=str)
     df = df.fillna(method='ffill')
-
+    
     # for rowIndex,row in df.iterrows():
     #     print(row)
     items = []
@@ -68,13 +69,14 @@ def read_excel(excelDir,fileName):
 (big_category, sub_category, svc_code, svc_name, scene_code, scene_name, trade_code, trade_name, consumer, provider, status) \
 VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) "
     for i in items:
+        
         params=(i.bigCategory,i.subCategory,i.svcCode,i.svcName,i.sceneCode,i.sceneName,
                 i.tradeCode,i.tradeName,i.consumer,i.provider,i.status)
         print(params) 
-        db.insert(sql,*params)
+        #db.insert(sql,*params)
 
         
-    print('done')    
+    print('==============================')    
 
 
 def listFiles(filePath):
@@ -85,7 +87,9 @@ def listFiles(filePath):
     
 
 if __name__ == '__main__':
-	read_excel(fllePath,file)
+    for sheetName in sheets:
+	    read_excel(fllePath,file,sheetName)
+        
     #print(os.getcwd())
     # listFiles(fllePath)
     #print("全景图")
