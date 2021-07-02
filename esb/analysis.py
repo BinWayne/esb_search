@@ -72,8 +72,6 @@ def read_excel(excelDir,fileName):
         df.iloc[i]['服务提供方'],
         df.iloc[i]['服务状态'])
         items.append(tt)
-        
-
     for i in items:
         print(i)   
    

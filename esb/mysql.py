@@ -26,16 +26,34 @@ class DBHelper():
         cur.close()
         conn.close()
 
+    def insert(self,sql,*params):#注意这里params要加*,因为传递过来的是元组，*表示参数个数不定
+        conn=self.connectDatabase()
+        cur=conn.cursor()
+        cur.execute(sql,params)
+        conn.commit()#注意要commit
+        cur.close()
+        conn.close()
+
 class TestDBHelper():
     def __init__(self):
         self.dbHelper=DBHelper()
 
     def testVersion(self):
         self.dbHelper.dbVersion() 
+    #插入数据
+    def testInsert(self):
+        sql="INSERT INTO esb.overview \
+(big_category, sub_category, svc_code, svc_name, scene_code, scene_name, trade_code, trade_name, consumer, provider, status) \
+VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) "
+        params=("test1","test2","test3",
+        "test4","test5","test6","test7","test8","test9","test10","test")
+        self.dbHelper.insert(sql,*params) #  *表示拆分元组，调用insert（*params）会重组成元组
+
 
 if __name__=="__main__":
     testDBHelper=TestDBHelper()
     testDBHelper.testVersion()
+    testDBHelper.testInsert()
 
 
 
