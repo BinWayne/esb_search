@@ -45,9 +45,9 @@ class TestDBHelper():
         sql="INSERT INTO esb.overview \
 (big_category, sub_category, svc_code, svc_name, scene_code, scene_name, trade_code, trade_name, consumer, provider, status) \
 VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) "
-        params=("test1","test2","test3",
-        "test4","test5","test6","test7","test8","test9","test10","test")
-        self.dbHelper.insert(sql,*params) #  *表示拆分元组，调用insert（*params）会重组成元组
+        params=('合作方服务', '查询类', '10043000004', '合作方签约信息查询', '01', '存管签约关系信息查询', '944406', '查询存管签约关系信息', '开放平台', '第三方存管系统', '已上线')
+        for i in range(1,100):
+            self.dbHelper.insert(sql,*params) #  *表示拆分元组，调用insert（*params）会重组成元组
 
 
 if __name__=="__main__":

@@ -1,5 +1,7 @@
 import  pandas  as pd
 import os
+from mysql import TestDBHelper
+from mysql import DBHelper
 
 file = 'quanjingtu.xlsx'
 fllePath = '/Users/wubin/workspace/python/tongshang/esb/excel'
@@ -33,32 +35,20 @@ class item:
         self.status = status    #状态
     def __str__(self):  # 定义打印对象时打印的字符串
         return str(self.__dict__)
-        # return " ".join(str(strObj) for strObj in (
-        #    self.bigCategory,
-        # self.subCategory,
-        # self.svcCode ,
-        # self.svcName ,
-        # self.sceneCode,
-        # self.sceneName,
-        # self.tradeCode ,
-        # self.tradeName ,
-        # self.consumer,
-        # self.provider,
-        # self.status))
-        
+
 
 def read_excel(excelDir,fileName):
     
     print("===============================")
     sheet = ['流程服务','内部渠道服务','合作方服务']
     print(f'start to check file {excelDir} / {fileName}')
-    df = pd.read_excel(excelDir+'/'+fileName,sheet_name='客户信息管理',dtype=str)
+    df = pd.read_excel(excelDir+'/'+fileName,sheet_name='合作方服务',dtype=str)
     df = df.fillna(method='ffill')
 
     # for rowIndex,row in df.iterrows():
     #     print(row)
     items = []
-    for i in range(0, len(df)):  
+    for i in range(0, len(df)): 
         tt = item(
         df.iloc[i]['大类'],
         df.iloc[i]['子类'],
@@ -72,9 +62,19 @@ def read_excel(excelDir,fileName):
         df.iloc[i]['服务提供方'],
         df.iloc[i]['服务状态'])
         items.append(tt)
+    #for i in items:
+    db = DBHelper()
+    sql="INSERT INTO esb.overview \
+(big_category, sub_category, svc_code, svc_name, scene_code, scene_name, trade_code, trade_name, consumer, provider, status) \
+VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) "
     for i in items:
-        print(i)   
-   
+        params=(i.bigCategory,i.subCategory,i.svcCode,i.svcName,i.sceneCode,i.sceneName,
+                i.tradeCode,i.tradeName,i.consumer,i.provider,i.status)
+        print(params) 
+        db.insert(sql,*params)
+
+        
+    print('done')    
 
 
 def listFiles(filePath):
