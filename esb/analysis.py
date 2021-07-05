@@ -3,10 +3,15 @@ import os
 from mysql import TestDBHelper
 from mysql import DBHelper
 
-file = 'quanjingtu.xlsx'
-fllePath = '/Users/wubin/workspace/python/tongshang/esb_search/esb/excel'
+# file = 'quanjingtu.xlsx'
+# fllePath = '/Users/wubin/workspace/python/tongshang/esb_search/esb/excel'
+
+file = 'quanjingtu1.xlsx'   #文档优化(删除空行、空缺补充) --持续优化
+fllePath = '/Users/king/LocalGitRepo/esb_search/esb/excel'
+
 sheets=['流程服务','内部渠道服务','合作方服务','客户信息管理','客户服务','存款','贷款',
-'银行卡','支付结算','投资理财','中间业务','金融市场','投行','客户资产管理','风险管理','银行业务支持','企业管理支持','技术支持']
+'银行卡','支付结算','投资理财','中间业务','金融市场','客户资产管理','风险管理','银行业务支持','企业管理支持','技术支持']
+# sheets=['流程服务']
 
 class item:
     bigCategory=''
@@ -45,7 +50,9 @@ def read_excel(excelDir,fileName,sheetName):
    
     df = pd.read_excel(excelDir+'/'+fileName,sheet_name=sheetName,dtype=str)
     df = df.fillna(method='ffill')
-    
+
+    # df = df.fillna(0)   #nan替换为0
+
     # for rowIndex,row in df.iterrows():
     #     print(row)
     items = []
@@ -65,15 +72,24 @@ def read_excel(excelDir,fileName,sheetName):
         items.append(tt)
     #for i in items:
     db = DBHelper()
-    sql="INSERT INTO esb.overview \
-(big_category, sub_category, svc_code, svc_name, scene_code, scene_name, trade_code, trade_name, consumer, provider, status) \
-VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) "
+    # sql = "INSERT INTO esb.overview \
+    # (big_category, sub_category, svc_code, svc_name, scene_code, scene_name, trade_code, trade_name, consumer, provider, status) \
+    # VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) "
+
+    sql = "INSERT INTO esbdata_services \
+      (bigCategory,subCategory,svcCode,svcName,sceneCode,sceneName,tradeCode,tradeName,consumer,provider,status) \
+       VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) "
+
     for i in items:
-        
+        # if i.svcCode==0:
+        #     print('=======跳过====')
+        #     continue
+        # else:
+
         params=(i.bigCategory,i.subCategory,i.svcCode,i.svcName,i.sceneCode,i.sceneName,
                 i.tradeCode,i.tradeName,i.consumer,i.provider,i.status)
-        print(params) 
-        #db.insert(sql,*params)
+        print(params)
+        db.insert(sql,*params)
 
         
     print('==============================')    
