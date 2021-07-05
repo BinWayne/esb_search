@@ -4,11 +4,18 @@ import pymysql
 class DBHelper():
     
     def __init__(self):
+        # self.host = 'localhost'
+        # self.user = 'root'
+        # self.passwd = 'root'
+        # self.db = 'esb'
+        # self.charset = 'utf8mb4'
+
         self.host='localhost'
-        self.user='root'
-        self.passwd='root'
-        self.db='esb'
+        self.user='esb'
+        self.passwd='esbdb123'
+        self.db='ESBDATA'
         self.charset='utf8mb4'
+
 
     def connectDatabase(self):
         conn=pymysql.connect(host=self.host,
