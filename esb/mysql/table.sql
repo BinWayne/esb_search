@@ -12,11 +12,13 @@ CREATE TABLE esb.overview (
   `consumer` varchar(40) COLLATE utf8_unicode_ci NOT NULL,
   `provider` varchar(40) COLLATE utf8_unicode_ci NOT NULL,
   `status` varchar(40) COLLATE utf8_unicode_ci NOT NULL,
+  `remarks` varchar(100) COLLATE utf8_unicode_ci,
   `id` INT UNSIGNED AUTO_INCREMENT,
   PRIMARY KEY ( `id` )
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
---trade_code和trade_name可为空吗？？
+
+-- ignore
 CREATE TABLE IF NOT EXISTS esbdata_services(
    id INT UNSIGNED AUTO_INCREMENT,
    bigCategory VARCHAR(10) NOT NULL,
@@ -32,7 +34,4 @@ CREATE TABLE IF NOT EXISTS esbdata_services(
    status VARCHAR(10) NOT NULL,
    PRIMARY KEY (id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 ALTER TABLE esbdata_services ADD UNIQUE KEY(svcCode, sceneCode,tradeCode,consumer,provider);
-
---服务码+场景码+消费方+服务方+交易码  唯一约束？

@@ -13,9 +13,8 @@ class DBHelper():
         self.host='localhost'
         self.user='esb'
         self.passwd='esbdb123'
-        self.db='ESBDATA'
+        self.db='esb'
         self.charset='utf8mb4'
-
 
     def connectDatabase(self):
         conn=pymysql.connect(host=self.host,
@@ -38,6 +37,13 @@ class DBHelper():
         cur=conn.cursor()
         cur.execute(sql,params)
         conn.commit()#注意要commit
+        cur.close()
+        conn.close()
+
+    def truncate(self):
+        conn = self.connectDatabase()
+        cur = conn.cursor()
+        cur.execute('TRUNCATE TABLE ESB.OVERVIEW')
         cur.close()
         conn.close()
 
