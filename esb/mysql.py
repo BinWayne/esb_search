@@ -43,7 +43,7 @@ class DBHelper():
     def truncate(self):
         conn = self.connectDatabase()
         cur = conn.cursor()
-        cur.execute('TRUNCATE TABLE ESB.OVERVIEW')
+        cur.execute('TRUNCATE TABLE esb.overview')
         cur.close()
         conn.close()
 

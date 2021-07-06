@@ -3,10 +3,8 @@ import os
 from mysql import TestDBHelper
 from mysql import DBHelper
 
-# fllePath = '/Users/wubin/workspace/python/tongshang/esb_search/esb/excel'
 
 file = 'quanjingtu.xlsx'   #优化完成
-fllePath = '/Users/king/LocalGitRepo/esb_search/esb/excel'
 
 sheets=['流程服务','内部渠道服务','合作方服务','客户信息管理','客户服务','存款','贷款',
 '银行卡','支付结算','投资理财','中间业务','金融市场','客户资产管理','风险管理','银行业务支持','企业管理支持','技术支持']
@@ -83,17 +81,19 @@ def read_excel(excelDir,fileName,sheetName):
 
 def listFiles(filePath):
     count=0
-    for i in os.listdir(fllePath):
-        count+=read_excel(fllePath,i)
+    #for i in os.listdir(fllePath):
+        #count+=read_excel(fllePath,i)
     #print(count)
     
 
 if __name__ == '__main__':
     db = DBHelper()
     db.truncate()
+    filePath = os.path.abspath(os.path.join(os.getcwd(), "excel"))
+    
     print("==========旧数据已删除==========")
     for sheetName in sheets:
-	    read_excel(fllePath,file,sheetName)
+	    read_excel(filePath,file,sheetName)
         
     #print(os.getcwd())
     # listFiles(fllePath)
