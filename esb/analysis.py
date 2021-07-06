@@ -3,15 +3,13 @@ import os
 from mysql import TestDBHelper
 from mysql import DBHelper
 
-# file = 'quanjingtu.xlsx'
 # fllePath = '/Users/wubin/workspace/python/tongshang/esb_search/esb/excel'
 
-file = 'quanjingtu1.xlsx'   #文档优化(删除空行、空缺补充) --持续优化
+file = 'quanjingtu.xlsx'   #优化完成
 fllePath = '/Users/king/LocalGitRepo/esb_search/esb/excel'
 
 sheets=['流程服务','内部渠道服务','合作方服务','客户信息管理','客户服务','存款','贷款',
 '银行卡','支付结算','投资理财','中间业务','金融市场','客户资产管理','风险管理','银行业务支持','企业管理支持','技术支持']
-# sheets=['流程服务']
 
 class item:
     bigCategory=''
@@ -25,9 +23,10 @@ class item:
     consumer = ''
     provider = ''
     status = ''
+    remarks = ''
 
     def __init__(self,bigCategory,subCategory,svcCode,svcName,sceneCode,sceneName,
-    tradeCode,tradeName,consumer,provider,status):
+    tradeCode,tradeName,consumer,provider,status,remarks):
         self.bigCategory = bigCategory#大类
         self.subCategory = subCategory#子类
         self.svcCode = svcCode #服务码
@@ -39,6 +38,7 @@ class item:
         self.consumer = consumer    #消费方
         self.provider = provider    #服务提供方
         self.status = status    #状态
+        self.remarks = remarks  #备注
     def __str__(self):  # 定义打印对象时打印的字符串
         return str(self.__dict__)
 
@@ -46,17 +46,13 @@ class item:
 def read_excel(excelDir,fileName,sheetName):
     
     print("===============================")
-    print(f'start to check file {excelDir} / {fileName}')
+    # print(f'start to check file {excelDir} / {fileName}')
    
     df = pd.read_excel(excelDir+'/'+fileName,sheet_name=sheetName,dtype=str)
     df = df.fillna(method='ffill')
 
-    # df = df.fillna(0)   #nan替换为0
-
-    # for rowIndex,row in df.iterrows():
-    #     print(row)
     items = []
-    for i in range(0, len(df)): 
+    for i in range(0, len(df)):
         tt = item(
         df.iloc[i]['大类'],
         df.iloc[i]['子类'],
@@ -68,30 +64,20 @@ def read_excel(excelDir,fileName,sheetName):
         df.iloc[i]['交易名称'],
         df.iloc[i]['服务调用方'],
         df.iloc[i]['服务提供方'],
-        df.iloc[i]['服务状态'])
+        df.iloc[i]['服务状态'],
+        df.iloc[i]['备注'])
         items.append(tt)
-    #for i in items:
-    db = DBHelper()
-    # sql = "INSERT INTO esb.overview \
-    # (big_category, sub_category, svc_code, svc_name, scene_code, scene_name, trade_code, trade_name, consumer, provider, status) \
-    # VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) "
 
-    sql = "INSERT INTO esbdata_services \
-      (bigCategory,subCategory,svcCode,svcName,sceneCode,sceneName,tradeCode,tradeName,consumer,provider,status) \
-       VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) "
+    db = DBHelper()
+    sql = "INSERT INTO esb.overview \
+    (big_category, sub_category, svc_code, svc_name, scene_code, scene_name, trade_code, trade_name, consumer, provider, status, remarks) \
+    VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) "
 
     for i in items:
-        # if i.svcCode==0:
-        #     print('=======跳过====')
-        #     continue
-        # else:
-
         params=(i.bigCategory,i.subCategory,i.svcCode,i.svcName,i.sceneCode,i.sceneName,
-                i.tradeCode,i.tradeName,i.consumer,i.provider,i.status)
+                i.tradeCode,i.tradeName,i.consumer,i.provider,i.status,i.remarks)
         print(params)
         db.insert(sql,*params)
-
-        
     print('==============================')    
 
 
@@ -103,6 +89,9 @@ def listFiles(filePath):
     
 
 if __name__ == '__main__':
+    db = DBHelper()
+    db.truncate()
+    print("==========旧数据已删除==========")
     for sheetName in sheets:
 	    read_excel(fllePath,file,sheetName)
         
